@@ -1,7 +1,6 @@
-from concurrent.futures.process import _check_system_limits
 import sys
+import os
 import math
-from tkinter import Y
 
 import pygame_widgets
 
@@ -13,6 +12,7 @@ from Chess_pieces.King import King
 from Chess_pieces.Figurestype import Figures, Black, White
 
 from client import getChClr, getChcd, getClr, getPart, send_server, createpotok, getSerb, getShah, getShahfig, getShahCoord, getPh, getPhFig, getFin
+# from database import Database
 
 from Chess_pieces.figcon import con, getCastlin, getMoveing, shahcon
 from Values import *
@@ -693,6 +693,12 @@ def back(a):
             pygame.mixer.Sound.play(songs[songs_id])
     elif a == 3:
         setresol()
+
+# def login(l, p): #l - Логин, p - Пароль
+#     client = Database()
+#     result = client.query("SELECT * FROM users WHERE login = %s AND password = %s", [l, p])
+#     client.release()
+#     return len(result) > 0 
 
 
 # Тело игры

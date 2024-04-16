@@ -1,4 +1,3 @@
-from pickle import TRUE
 import socket
 import threading
 from Chess_pieces.Figurestype import Figures, black_king, white_king, White, Black

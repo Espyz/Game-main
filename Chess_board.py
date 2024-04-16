@@ -1,16 +1,10 @@
 import pygame
 from Invisible_Buttons import InvisButtons
-from data import poss
+from data import poss, white_pawn, black_pawn
 
 pygame.init()
 clock = pygame.time.Clock()
 
-# Изображения
-zero = pygame.image.load("Image/Zero.png")
-place_image = pygame.image.load('Image/place.png')
-
-white_pawn = pygame.image.load('Image/White_Pawn.png')
-black_pawn = pygame.image.load('Image/Black_Pawn.png')
 # настройки окна
 size = width, height = 1920, 1080
 screen = pygame.display.set_mode(size)
