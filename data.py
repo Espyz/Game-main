@@ -51,6 +51,10 @@ da_screen = pygame.image.load(resource_path('Image/da3.png'))
 da2_screen = pygame.image.load(resource_path('Image/da2.png'))
 go = pygame.image.load(resource_path('Image/go.png'))
 player_button = pygame.image.load(resource_path('Image/player.png'))
+login_button = pygame.image.load(resource_path('Image/player.png'))
+login_menu = pygame.image.load(resource_path('Image/login_menu.png'))
+login_success = pygame.image.load(resource_path('Image/login_success.png'))
+login_not_success = pygame.image.load(resource_path('Image/login_not_success.png'))
 pk_button = pygame.image.load(resource_path('Image/pk.png'))
 resolition1 = pygame.image.load(resource_path('Image/1920_1080.png'))
 resolition2 = pygame.image.load(resource_path('Image/1440_900.png'))
@@ -75,7 +79,7 @@ CheckmateBlack_1440 = pygame.image.load(resource_path('Image/CheckmateBlack_1440
 CheckWhite_1440 = pygame.image.load(resource_path('Image/CheckWhite_1440.png'))
 CheckmateWhite_1440 = pygame.image.load(resource_path('Image/CheckmateWhite_1440.png'))
 choice = pygame.image.load(resource_path('Image/Choice.png'))
-Authorship = pygame.image.load(resource_path('Image/Authorship.png'))
+# Authorship = pygame.image.load(resource_path('Image/Authorship.png'))
 Yes = pygame.image.load(resource_path('Image/Yes.png'))
 No = pygame.image.load(resource_path('Image/No.png'))
 Mini_back = pygame.image.load(resource_path('Image/Mini_back.PNG'))
@@ -128,6 +132,9 @@ place_sound = pygame.mixer.Sound(resource_path('Sounds/place.mp3'))
 forest_songs = pygame.mixer.Sound(resource_path('Sounds/forest.mp3'))
 fortress_songs = pygame.mixer.Sound(resource_path('Sounds/fortress.mp3'))
 on_call_songs = pygame.mixer.Sound(resource_path('Sounds/on_call.mp3'))
+
+# шрифты
+standart_font = pygame.font.Font(resource_path('Fonts/JournalItalic.ttf'), 30)
 
 # корректировка размеры доски / длины / ширины
 moment, poss = 0, [0, 0, 0]

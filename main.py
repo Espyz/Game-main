@@ -12,7 +12,7 @@ from Chess_pieces.King import King
 from Chess_pieces.Figurestype import Figures, Black, White
 
 from client import getChClr, getChcd, getClr, getPart, send_server, createpotok, getSerb, getShah, getShahfig, getShahCoord, getPh, getPhFig, getFin
-# from database import Database
+from database import Database
 
 from Chess_pieces.figcon import con, getCastlin, getMoveing, shahcon
 from Values import *
@@ -45,6 +45,10 @@ horse_button = InvisButtons(90, 90)
 el_button = InvisButtons(90, 90)
 castle_button = InvisButtons(90, 90)
 queen_button = InvisButtons(90, 90)
+Login_button = InvisButtons(150, 150)
+Login_confirm_button = InvisButtons(143, 43)
+Login_box = InvisButtons(160, 50)
+Password_box = InvisButtons(160, 50)
 
 # Доска
 b = Board()
@@ -101,10 +105,19 @@ def setts():
     global okno
     okno = -1
 
-
-def back_setts():
+def logins():
     global okno
-    okno = -3
+    okno = -4
+
+
+def back_setts(_from):
+    global okno, need_input_password, need_input_login
+    if (_from == 'login'):
+        need_input_password = False
+        need_input_login = False
+        okno = 0
+    else: 
+        okno = -3
 
 
 def devel(condition):
@@ -526,8 +539,12 @@ def sett_anima(zzmove_xy, condition):
 
     screen.blit(placebutton1_1, (width / 2 - 316 + after_but_yesno, (height / 7 * 2 - 21 - 120 + const) -
                                  (math.sin(zzmove_xy / 30) * factor / 25) - after_but))
-    screen.blit(play_button, (width / 2 - 75 + after_but_yesno, (height / 7 * 2 - 120 + const) -
-                              (math.sin(zzmove_xy / 30) * factor / 25) - after_but))
+    if not player_login:
+        screen.blit(login_button, (width / 2 - 75 + after_but_yesno, (height / 7 * 2 - 120 + const) -
+                                (math.sin(zzmove_xy / 30) * factor / 25) - after_but))
+    else:
+        screen.blit(play_button, (width / 2 - 75 + after_but_yesno, (height / 7 * 2 - 120 + const) -
+                                (math.sin(zzmove_xy / 30) * factor / 25) - after_but))
     screen.blit(placebutton1_2, (width / 2 - 316 + after_but_yesno, (height / 7 * 2 - 21 - 120 + const) -
                                  (math.sin(zzmove_xy / 30) * factor / 25) - after_but))
 
@@ -562,8 +579,12 @@ def yesno(zzmove_xy, condition):
 
     screen.blit(placebutton1_1, ((math.sin(zzmove_xy / 30) * factor / 25) + after_but_yesno + width / 2 - 316,
                                  height / 7 * 2 - 21 - 120 + const - after_but))
-    screen.blit(play_button, ((math.sin(zzmove_xy / 30) * factor / 25) + after_but_yesno + width / 2 - 75,
-                              height / 7 * 2 - 120 + const - after_but))
+    if not player_login:
+        screen.blit(login_button, ((math.sin(zzmove_xy / 30) * factor / 25) + after_but_yesno + width / 2 - 75,
+                                height / 7 * 2 - 120 + const - after_but))
+    else:
+        screen.blit(play_button, ((math.sin(zzmove_xy / 30) * factor / 25) + after_but_yesno + width / 2 - 75,
+                                height / 7 * 2 - 120 + const - after_but))
     screen.blit(placebutton1_2, ((math.sin(zzmove_xy / 30) * factor / 25) + after_but_yesno + width / 2 - 316,
                                  height / 7 * 2 - 21 - 120 + const - after_but))
 
@@ -694,12 +715,61 @@ def back(a):
     elif a == 3:
         setresol()
 
-# def login(l, p): #l - Логин, p - Пароль
-#     client = Database()
-#     result = client.query("SELECT * FROM users WHERE login = %s AND password = %s", [l, p])
-#     client.release()
-#     return len(result) > 0 
+def login_input():
+    global need_input_login, need_input_password
+    need_input_login = True
+    need_input_password = False
 
+def password_input():
+    global need_input_login, need_input_password
+    need_input_login = False
+    need_input_password = True
+
+def login(l, p): 
+    global need_input_login, need_input_password, success_window, unsuccess_window, player_login
+    need_input_password = False
+    need_input_login = False
+
+    client = Database()
+    result = client.query("SELECT * FROM users WHERE login = %s AND password = %s", [l, p])
+    if len(result) > 0:
+        client.release()
+        player_login = True    
+        success_window = True
+    else:
+        result = client.query("SELECT * FROM users WHERE login = %s", [l])
+        if len(result) > 0:
+            client.release()
+            unsuccess_window = True
+        else:
+            result = client.query("INSERT INTO users (login, password) VALUES (%s, %s) RETURNING *", [l, p])
+            client.release()
+            player_login = True
+            success_window = True
+
+def unsuccess_return():
+    global unsuccess_window, need_input_login, need_input_password
+    unsuccess_window = False
+    need_input_login = False
+    need_input_password = False
+
+def success_return():
+    global success_window, need_input_login, need_input_password, okno
+    okno = 0
+    success_window = False
+    need_input_login = False
+    need_input_password = False
+
+#Функция отображающая текст на экране
+def print_text(message, x, y, font_color = (0,0,0), font_type = standart_font, font_size = 30):
+    text = font_type.render(message, True, font_color)
+    screen.blit(text, (x, y))
+
+need_input_login = False
+need_input_password = False
+input_login = ''
+input_password = ''
+player_login = False
 
 # Тело игры
 while 1:
@@ -708,6 +778,27 @@ while 1:
     for event in events:
         if event.type == pygame.QUIT:
             close_game()
+        elif event.type == pygame.KEYDOWN:
+            if (need_input_login):
+                if event.key == pygame.K_RETURN:
+                    need_input_login = False
+                    input_login = ''
+                elif event.key == pygame.K_BACKSPACE:
+                    input_login = input_login[0:-1]
+                elif event.key == pygame.K_TAB:
+                    pass
+                else:
+                    input_login += event.unicode
+            elif (need_input_password):
+                if event.key == pygame.K_RETURN:
+                    need_input_password = False
+                    input_password = ''
+                elif event.key == pygame.K_BACKSPACE:
+                    input_password = input_password[0:-1]
+                elif event.key == pygame.K_TAB:
+                    pass
+                else:
+                    input_password += event.unicode
 
     move_xy += 1
 
@@ -716,21 +807,17 @@ while 1:
         if okno != 2 and okno != 3:
             lobbyrect[1] = lobbyrect[1] + after
         screen.blit(lobby_image, lobbyrect)
-
     else:
         if getresol() == '1920':
             screen.blit(backgrounds[getresol()][bk], (lobbyrect[0], lobbyrect[1] + 1000))
         else:
             screen.blit(backgrounds[getresol()][bk], (lobbyrect[0] + 240, lobbyrect[1] + 1000 + 90))
-
     # Контроль переменной after
     if okno == -10 and zmove_xy > math.pi * 30:
         after = 0
-
     if okno != 1:
         lobbyrect = lobbyrect.move([math.cos(move_xy / 60) * 30 - 75 - lobbyrect[0],
                                     math.sin(move_xy / 30) * 30 - 3100 - lobbyrect[1] + after])
-
     # Настройка выдвигающей анимации yes / no
     if clo == 1:
         anima = 1
@@ -742,7 +829,6 @@ while 1:
                                                    (math.sin(zzmove_xy / 30) * 2000 / 25)
             zzmove_xy, clo = 0, 2
             anima = 0
-
     # Настройка обратной анимации yes / no
     if clo == 3:
         anima = 1
@@ -752,7 +838,6 @@ while 1:
             after_yes, after_no, after_but_yesno = 0, 0, 0
             zzmove_xy, clo = 0, 0
             anima = 0
-
     # Отрисовка Yes / no
     if clo == 2 and okno < 1:
         screen.blit(Yes, (after_yes - 1200, height / 2 - 10 + const))
@@ -762,7 +847,6 @@ while 1:
                              height / 2 + 15 + const, button_sound, 0, 0, 'yes', action=close_game)
             yes_button.paint(after_no + 329 + width,
                              height / 2 - 145 + 27 + const, button_sound, 0, 0, 'no', action=close_window)
-
     # Выдвижение настроек
     if okno == -1:
         anima = 1
@@ -774,7 +858,6 @@ while 1:
             after_but2, after_but3 = (math.sin(zzmove_xy / 60) * 4000), (math.sin(zzmove_xy / 450) * 1000)
             zzmove_xy, anima = 0, 0
             okno = -2
-
     # Обратная анимация настроек
     if okno == -3 and clo != 1 and clo != 3:
         anima = 1
@@ -783,12 +866,10 @@ while 1:
             sett_anima(zzmove_xy, False)
         else:
             after_but, after_but2, after_but3, after_but4, zzmove_xy, okno, anima = [0 for i in range(7)]
-
     # Маленькая кнопка назад
     if okno == 2 and clo != 1 and clo != 3:
         back_button.paint(width - 350, 110, button_sound, -10, 0, 'mini_scroll', action=scroll)
         pass
-
     # Анимация перехода вверх / вниз
     if clo != 1 and clo != 3:
         if okno == 1:
@@ -796,7 +877,6 @@ while 1:
 
         elif okno == -10:
             lobby_anima(False)
-
     # Примечание
     if develz == 1:
         anima = 1
@@ -806,7 +886,6 @@ while 1:
         else:
             after_dev, develz, after_place = - math.sin(zzmove_xy / 30) * 2000, 2, - math.sin(zzmove_xy / 30) * 2000
             zzmove_xy, anima = 0, 0
-
     elif develz == 3:
         anima = 1
         if zzmove_xy <= math.pi * 15:
@@ -815,13 +894,11 @@ while 1:
         else:
             after_dev, develz, after_place = 0, 0, 0
             zzmove_xy, anima = 0, 0
-
     if develz == 2 and zzmove_xy == 0 and okno != 0:
         screen.blit(Development, (width / 4 - 100, height / 2 - const + after_dev + 1870))
         if anima == 0:
             Devel_butt.paint(width / 4 + 134, height / 2 - const + after_dev + 1870 + 72,
                                 button_sound, False, 0, 'back_devel', action=devel)
-
     # Кнопки меню выбора между сервером и одиночной игрой
     if (okno == 2 or okno == 3) and clo != 1 and clo != 3:
         if develz == 0:
@@ -842,15 +919,21 @@ while 1:
             Server_button.paint(width / 5 * 3 + 39,
                                 height / 4 + 62 + const, button_sound, 0, 0, 'scrolling', action=scrolling)
             back_button.paint(width - 350, 110, button_sound, -10, 0, 'mini_scroll', action=scroll)
-
     # Отрисовка меню
     if (okno == 0 or okno == -2) and clo != 1 and clo != 3:
+        # Кнопка начала игры
         screen.blit(placebutton1_1, (width / 2 - 316 + after_but_yesno,
                                      height / 7 * 2 - 21 - 120 - after_but + const))
-        screen.blit(play_button, (width / 2 - 75 + after_but_yesno,
+        if not player_login:
+            screen.blit(login_button, (width / 2 - 75 + after_but_yesno,
+                                  height / 7 * 2 - 120 - after_but + const))
+        else:
+            screen.blit(play_button, (width / 2 - 75 + after_but_yesno,
                                   height / 7 * 2 - 120 - after_but + const))
         screen.blit(placebutton1_2, (width / 2 - 316 + after_but_yesno,
                                      height / 7 * 2 - 21 - 120 - after_but + const))
+        
+        # Кнопка выхода
         screen.blit(placebutton1_1, (width / 2 - 316 + after_but_yesno,
                                      height / 7 * 5.2 - 21 - 120 + after_but + const))
         screen.blit(exit_button, (width / 2 - 75 + after_but_yesno,
@@ -912,26 +995,47 @@ while 1:
                                          height / 7 * 3.6 - 26 - 120 + after_but + const))
 
             if anima == 0:
-                scroll_button.paint(width / 2 - 75 + after_but_yesno, height / 7 * 2 - 120 - after_but / 1.9 + const,
+                if not player_login:
+                    Login_button.paint(width / 2 - 75 + after_but_yesno, height / 7 * 2 - 120 - after_but / 1.9 + const,
+                                    button_sound, 1, 0, 'logins', action=logins)
+                else:
+                    scroll_button.paint(width / 2 - 75 + after_but_yesno, height / 7 * 2 - 120 - after_but / 1.9 + const,
                                     button_sound, 1, 0, 'scroll', action=scroll)
-
                 Exit_button.paint(width / 2 - 75 + after_but_yesno, height / 7 * 5.2 - 120 + after_but + const,
                                   button_sound, 0, 0, 'close_window', action=close_window)
                 Setting_button.paint(width / 2 - 75 + after_but_yesno,
-                                     height / 7 * 3.6 - 120 + const, button_sound, 0, 0, 'setts', action=setts)
-
+                                     height / 7 * 3.6 - 120 + const, button_sound, 0, 0, 'setts', action=setts)    
     # Иначе отрисовка yes / no
     else:
         if clo == 1:
             yesno(zzmove_xy, True)
         elif clo == 3:
             yesno(zzmove_xy, False)
-
-
+    # Отрисовка поля логина
+    if okno == -4:
+        if success_window:
+            screen.blit(login_success, (1750 - 900 + after_but_yesno, height / 2 / 1.7 + const + 50))
+            Back_sett.paint(width / 7 * 3.294 + after_but_yesno, 
+                            height / 1.7 + const - 35, button_sound, 0, 0, 'success_return', action=success_return)
+        elif unsuccess_window:
+            screen.blit(login_not_success, (1750 - 900 + after_but_yesno, height / 2 / 1.7 + const + 50))
+            Back_sett.paint(width / 7 * 3.294 + after_but_yesno, 
+                            height / 1.7 + const - 35, button_sound, 0, 0, 'unsuccess_return', action=unsuccess_return)
+        else:
+            screen.blit(login_menu, (1750 - 900 + after_but_yesno, height / 2 / 1.7 + const))
+            Back_sett.paint(width / 7 * 3.294 + after_but_yesno, 
+                            height / 1.7 + const - 5, button_sound, 0, 0, 'back_setts', action=back_setts, dop_values='login')
+            Login_confirm_button.paint(width / 7 * 3.294 + after_but_yesno, 
+                                    height / 1.7 + const - 69, button_sound, input_login, input_password, 'confirm_login', action=login)
+            Login_box.paint(width / 7 * 3.294 + after_but_yesno - 7,
+                            height / 1.7 + const - 237, button_sound, 0, 0, 'login_input', action=login_input)
+            print_text(input_login, width / 7 * 3.294 + after_but_yesno, height / 1.7 + const - 230)
+            Password_box.paint(width / 7 * 3.294 + after_but_yesno - 7,
+                                height / 1.7 + const - 150, button_sound, 0, 0, 'password_input', action=password_input)
+            print_text(input_password, width / 7 * 3.294 + after_but_yesno, height / 1.7 + const - 143)
     # Включает игру
     if getSerb() == 1:
         okno = 5
-
     # Отрисовка поля боя
     if okno == 5 and clo != 1 and clo != 3:
         anima = 1
@@ -975,16 +1079,13 @@ while 1:
             zmove_xy += 1
 
             # screen.blit(go, (-(math.cos(zmove_xy / 12) * 2300) - 300, 0))
-
     if getChcd():
         if getChClr() == getClr():
             chose_anima(True, chX, chY, chKey)
         else:
             chose_anima(True, 0, 0, '0')
-
     if load == 1:
         fig.movement_pict()
-
     # Переход к залу ожидания
     if okno == 3 or okno == 4:
         if okno == 3 and zzzmove_xy <= math.pi * 6:
@@ -994,7 +1095,6 @@ while 1:
             screen.blit(go, (-300, 0))
             zzzmove_xy = 0
             okno = 4
-
     # Зал ожидания
     if okno == 4:
         if zzmove_xy == 0:
@@ -1005,7 +1105,6 @@ while 1:
         screen.blit(pk_button, (width / 9 * 5.2, height / 2.5))
         for nums, i in enumerate([0, 1, 2]):
             screen.blit(runs[i - zzmove_xy // 4 % 3], (width / 9 * (4.03 + nums * 0.3), height / 2.5 + 17))
-
     # Кнопка звука
     if song_turn:
         screen.blit(Mini_song_off, (width - 295, 110))
@@ -1015,16 +1114,20 @@ while 1:
         pass
     turn_button.paint(width - 295, 110, button_sound, 0, 0, 'turn', action=turn_song)
 
-    if okno < 1:
-        if getresol() == '1920':
-            screen.blit(Authorship, (width - 445, height - 55))
-        else:
-            screen.blit(Authorship, (width - width / 3, height - height / 6.5))
+    # Надпись "Автор дизайнерских иконок"
+    # if okno < 1:
+    #     if getresol() == '1920':
+    #         screen.blit(Authorship, (width - 445, height - 55))
+    #     else:
+    #         screen.blit(Authorship, (width - width / 3, height - height / 6.5))
+
 
     if getPh() == 1:
         phant = getPhFig()
     else:
         phant = Pawn(-10000,-10000, 'NoColor')
+
+    key = pygame.key.get_pressed()
 
     # Конец цикла
     clock.tick(60)

@@ -7,7 +7,7 @@ move_xy, zmove_xy, zzmove_xy, zzzmove_xy, move, after, \
     after_but, after_but2, after_but3, after_but4, after_yes, \
     after_no, after_but_yesno, after_buts, after_da, after_dev, after_place, after_dev2 = [0 for _ in range(18)]
 okno, clo, leg, sc, game, hod, fig, load, key, bk, moment, \
-    songs_id, song_turn, back_lobby, develz, anima = [0 for _ in range(16)]
+    songs_id, song_turn, back_lobby, develz, anima, success_window, unsuccess_window = [0 for _ in range(18)]
 
 const = 20
 
@@ -26,3 +26,8 @@ Checks = {'1920': {'white': [CheckWhite, CheckmateWhite], 'black': [CheckBlack, 
 Сhoses = {'1920': {'white': [Choice_white, Choice_black], 'black': [Choice_white, Choice_black]},
           '1440': {'white': [Choice_white_1440, Choice_black_1440],
                    'black': [Choice_white_1440, Choice_black_1440]}}
+
+stroke4_tags = ['scroll', 'setts', 'close_window', 'scrolling', 'devel', 'logins']
+stroke5_tags = ['back_setts', 'yes', 'no', 'back_devel', 'confirm_login', 'success_return', 'unsuccess_return']
+Mini_stroke_tags = ['turn', 'mini_scroll']
+window_stroke_tags = ['back', 'next']

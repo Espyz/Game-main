@@ -1,6 +1,5 @@
 from Values import *
 
-
 class InvisButtons:
     def __init__(self, inactive_width, inactive_height):
         self.__inactive_width = inactive_width
@@ -14,13 +13,13 @@ class InvisButtons:
         if (x_coord < mouse[0] < x_coord + self.__inactive_width) and \
                 (y_coord < mouse[1] < y_coord + self.__inactive_height):
 
-            if name == 'scroll' or name == 'setts' or name == 'close_window' or name == 'scrolling' or name == 'devel':
+            if name in stroke4_tags:
                 screen.blit(stroke4, [x_coord, y_coord])
-            elif name == 'back_setts' or name == 'yes' or name == 'no' or name == 'back_devel':
+            elif name in stroke5_tags:
                 screen.blit(stroke5, [x_coord, y_coord])
-            elif name == 'turn' or name == 'mini_scroll':
+            elif name in Mini_stroke_tags:
                 screen.blit(Mini_stroke, [x_coord, y_coord])
-            elif name != 'back' and name != 'next':
+            elif name in window_stroke_tags:
                 if getresol() == '1920':
                     screen.blit(stroke, [x_coord, y_coord])
                 else:
@@ -40,8 +39,10 @@ class InvisButtons:
                 else:
                     if self.__press == 0:
                         pygame.mixer.Sound.play(button_sound)
-                        if name == 'connect' or name == 'sett_anima':
+                        if name == 'connect' or name == 'sett_anima' or name == 'confirm_login':
                             action(x, y)
+                        elif name == 'back_setts':
+                            action(dop_values)
                         else:
                             action()
                         self.__press = 1
