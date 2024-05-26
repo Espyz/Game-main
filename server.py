@@ -18,7 +18,7 @@ part = 0
 
 
 def send_all(data):
-    print(part)
+    print(part, data)
     dates = data.decode('utf-8').split(' ')
     if (len(users) == 2) and (len(dates) == 2):
         if part % 2 == 1:
