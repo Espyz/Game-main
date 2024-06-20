@@ -2,7 +2,7 @@ import psycopg2
 
 class Database:
     def __init__(self):
-        self.conn = psycopg2.connect(dbname="game", user="espyz", password="33215033q", host="localhost")
+        self.conn = psycopg2.connect(dbname="game", user="espyz", password="Ilx1dzw8SFzfPc1F", host="81.177.140.38")
         self.conn.autocommit = True
 
     def query(self, request, params = []):
